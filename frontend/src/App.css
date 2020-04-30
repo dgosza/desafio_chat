@@ -1,0 +1,36 @@
+.chatBox{
+    height: 500px;
+}
+
+.onlineUsers{
+}
+
+.btn{
+    background-color: #143DB4;
+}
+
+.btn .enviar{
+    width: 100%;
+}
+
+.btn:hover{
+    background-color: rgb(6, 65, 245);
+    
+}
+
+.headerMsg{
+    font-size:15px;
+}
+
+.divider{
+    opacity: 0.5;
+}
+
+.btnPowerOff{
+    color: black;
+    cursor: pointer;
+}
+
+.btnPowerOff:hover{
+    color: red
+}
