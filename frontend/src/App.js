@@ -1,18 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 //Icones
 import { PersonPin } from '@styled-icons/material/PersonPin'
 import { PowerOff } from '@styled-icons/fa-solid/PowerOff'
+
+//API Backend
+import api from './service/apiBackend'
+
+//Componente Mensagem
+import Message from './Mensagem'
+
 //CSS
 import './App.css'
 
 const App = () => {
 
-    const [name, setName] = useState('')
-    const [showInsertName, setInsertName] = useState(true) //change here to change
+    const [name, setName] = useState('Diego') //change
+    const [showInsertName, setInsertName] = useState(false) //change here
+    const [users, setUsers] = useState([])
 
     const inputMessageBox = React.createRef()
     const inputLogin = React.createRef();
+
+    const showUsers = users.map((IndexUser, index) => {
+        return <Message key={index} name={IndexUser.name} message={IndexUser.message}></Message>
+        
+    })
+    
 
     const handleForm = (e) => {
         if (name === '') {
@@ -23,8 +37,22 @@ const App = () => {
         }
     }
 
-    const handleSend = (msg) => {
-        console.log(msg)
+    const handleSend = async (msg) => {
+
+        const dataPrepared = { name, message: msg }
+        
+        //copy the values of state
+        const copyofUsers = [...users];
+        // add the object to the array
+        copyofUsers.push(dataPrepared)
+        //set the new array of objects in users state
+        setUsers(copyofUsers)
+     
+
+
+        const response  = api.post('sendMessage', dataPrepared)
+        
+
     }
 
     const validationKeyUP = (e) => {
@@ -70,7 +98,9 @@ const App = () => {
             <div className="col s12 l10 chatBox">
                 <p className="headerMsg center">Histórico de Mensagens</p>
                 <div className="divider"></div>
-
+                <ul>
+                    {showUsers}
+                </ul>
             </div>
 
             <div className="col s12 l2 onlineUsers">
