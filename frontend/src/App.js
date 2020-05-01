@@ -15,19 +15,21 @@ import './App.css'
 
 const App = () => {
 
-    const [name, setName] = useState('Diego') //change
-    const [showInsertName, setInsertName] = useState(false) //change here
+    const [name, setName] = useState('')
+    const [showInsertName, setInsertName] = useState(true) //change here
     const [users, setUsers] = useState([])
+    const [limiteMsg, setLimiteMsg] = useState(0)
 
     const inputMessageBox = React.createRef()
     const inputLogin = React.createRef();
+    
+    const reloadPage = limiteMsg === 12 ? ' - Recarregue a pagina para resetar!' : ''
 
     const showUsers = users.map((IndexUser, index) => {
-        return <Message key={index} name={IndexUser.name} message={IndexUser.message}></Message>
+        return <Message key={index} data={IndexUser.date} name={IndexUser.name} hora={IndexUser.hour} message={IndexUser.message}></Message>
         
     })
     
-
     const handleForm = (e) => {
         if (name === '') {
             e.preventDefault()
@@ -39,20 +41,23 @@ const App = () => {
 
     const handleSend = async (msg) => {
 
-        const dataPrepared = { name, message: msg }
+        if(limiteMsg !== 12){
+
+            const dataPrepared = { name, message: msg }        
+            const response  = await api.post('sendMessage', dataPrepared)
+            
+            //copy the values of state
+            const copyofUsers = [...users];
+            // add the object to the array
+            copyofUsers.push(response.data)
+            //set the new array of objects in users state
+
+            setUsers(copyofUsers)
+            setLimiteMsg(limiteMsg + 1)
+        }else{
+            alert('Limite de Mensagens Atingido. Recaregue a página para limpar o chat!')
+        }
         
-        //copy the values of state
-        const copyofUsers = [...users];
-        // add the object to the array
-        copyofUsers.push(dataPrepared)
-        //set the new array of objects in users state
-        setUsers(copyofUsers)
-     
-
-
-        const response  = api.post('sendMessage', dataPrepared)
-        
-
     }
 
     const validationKeyUP = (e) => {
@@ -95,6 +100,10 @@ const App = () => {
                <PowerOff size={30} className="btnPowerOff" onClick={() => {setInsertName(true)}}></PowerOff>
             </div>
 
+            <div className="col s12 l12">
+                <p>Limite de Mensagens: <b>{limiteMsg}</b> de <b>12</b> <b className="reloadPage">{reloadPage}</b> </p>
+            </div>
+
             <div className="col s12 l10 chatBox">
                 <p className="headerMsg center">Histórico de Mensagens</p>
                 <div className="divider"></div>
@@ -117,6 +126,7 @@ const App = () => {
                 <div className="col s12 l2">
                     <a className="btn enviar left" type="submit" onClick={ () => {handleClickButtonMessage()} }>ENVIAR</a>
                 </div>
+                <br/>
 
             </div>
 
